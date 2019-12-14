@@ -3,7 +3,7 @@
 ## 资料
 [对标es社区](https://elasticsearch.cn/)
 
-[Github OAuth DOS](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)
+[Github OAuth DOS 授权app](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)
 
 ##
 仿es社区 论坛项目
