@@ -11,8 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.crypto.Data;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 
@@ -33,7 +34,7 @@ public class AuthorController {
     @GetMapping("/callback")
     public String callback(@RequestParam("code") String code,
                            @RequestParam("state") String state,
-                           HttpServletRequest req
+                           HttpServletRequest req, HttpServletResponse rsp
                            ){
         AccessToken accessToken = new AccessToken();
         accessToken.setClient_id(clientId);
@@ -46,17 +47,21 @@ public class AuthorController {
         String accessToken1 = okHttp.getAccessToken(accessToken);
         //发送get请求 携带accessToken 获取User信息
         GithubUser githubuser = okHttp.getUser(accessToken1);
+
         //登录 cookie和session
         if(githubuser!=null){
             User user = new User();
-            user.setToken(UUID.randomUUID().toString());
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
             user.setAccountId(String.valueOf(githubuser.getId()));
             user.setName(githubuser.getName());
             //当前的毫秒数
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
-            req.getSession().setAttribute("githubuser",githubuser);
+            rsp.addCookie(new Cookie("token",token));
+
+
             //这有个坑 /
             return "redirect:/";
         }else{
