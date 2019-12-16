@@ -23,9 +23,9 @@ public class OkHttp {
                         .build();
                 try (Response response = client.newCall(request).execute()) {
                     String string = response.body().string();
+                   // System.out.println(string); 只要accession_token
                     String s1 = string.split("&")[0];
                     String s2 = s1.split("=")[1];
-                   // System.out.println(s2);
                     return s2;
                 } catch (IOException e) {
                     e.printStackTrace();
