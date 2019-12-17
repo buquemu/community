@@ -1,0 +1,12 @@
+body{
+    background: url("http://pic.rmb.bdstatic.com/00271105ffc6b7560533dd24ce8c51e84066.jpeg@c_1,w_1921,h_1011,x_0,y_0");
+    color:#f7f7f7
+}
+.main{
+    background: #b0b0b559;
+    margin: 40px;
+}
+.btn-publish{
+    float: right;
+    margin-bottom: 15px;
+}

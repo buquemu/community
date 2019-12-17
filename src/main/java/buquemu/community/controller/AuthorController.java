@@ -64,9 +64,9 @@ public class AuthorController {
 
             //这有个坑 /
             return "redirect:/";
-        }else{
+        }else
             return "redirect:/";
         }
     }
-}
+
 
