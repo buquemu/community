@@ -1,20 +1,16 @@
 package buquemu.community.controller;
 
-import buquemu.community.Model.User;
 import buquemu.community.dto.AccessToken;
 import buquemu.community.dto.GithubUser;
 import buquemu.community.kit.OkHttp;
-import buquemu.community.mapper.UserMapper;
+import buquemu.community.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
 
 
 @Controller
@@ -22,7 +18,7 @@ public class AuthorController {
     @Autowired
     private OkHttp okHttp;
     @Autowired
-    private UserMapper userMapper;
+    private AuthorService authorService;
     //通过配置文件方式注入
     @Value("${github.client.id}")
     private String clientId;
@@ -34,7 +30,7 @@ public class AuthorController {
     @GetMapping("/callback")
     public String callback(@RequestParam("code") String code,
                            @RequestParam("state") String state,
-                           HttpServletRequest req, HttpServletResponse rsp
+                           HttpServletResponse rsp//HttpServletRequest req
                            ){
         AccessToken accessToken = new AccessToken();
         accessToken.setClient_id(clientId);
@@ -47,26 +43,17 @@ public class AuthorController {
         String accessToken1 = okHttp.getAccessToken(accessToken);
         //发送get请求 携带accessToken 获取User信息
         GithubUser githubuser = okHttp.getUser(accessToken1);
-
         //登录 cookie和session
-        if(githubuser!=null){
-            User user = new User();
-            String token = UUID.randomUUID().toString();
-            user.setToken(token);
-            user.setAccountId(String.valueOf(githubuser.getId()));
-            user.setName(githubuser.getName());
-            //当前的毫秒数
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            userMapper.insert(user);
-            rsp.addCookie(new Cookie("token",token));
-
-
-            //这有个坑 /
+       // req.getSession().setAttribute("githubuser",githubuser);
+        if(authorService.author(githubuser,rsp)==true){
             return "redirect:/";
-        }else
+        }
+        //这有个坑 /
+        else {
             return "redirect:/";
         }
     }
+}
+
 
 

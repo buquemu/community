@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-    <link rel="stylesheet" href="css/community.css">
+    <link rel="stylesheet" href="css/publish.css">
     <script src="js/bootstrap.min.js" type="application/javascript"></script>
 
 
@@ -22,7 +22,6 @@
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
             <form class="navbar-form navbar-left">
                 <div class="form-group">
                     <input type="text" class="form-control" placeholder="搜索问题">
@@ -32,6 +31,9 @@
             <ul class="nav navbar-nav navbar-right">
                 <!--有session值-->
                 <!--/*@thymesVar id="githubuser" type=""*/-->
+                <li th:if="${session.githubuser!=null}">
+                    <a href="/publish">发布</a>
+                </li>
                 <li class="dropdown" th:if="${session.githubuser!=null}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="${session.githubuser.getName()}"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -54,19 +56,26 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12" >
             <h3><span class="glyphicon glyphicon-search" aria-hidden="true"></span>发起</h3>
             <hr>
-            <form action="">
+            <form action="/publish" method="post">
                 <div class="form-group">
-                    <label for="title">问题标题（简单扼要）:</label>
-                    <input type="text" class="form-control" id="title" placeholder="别问！问就不会" name="title">
+                    <label for="title" >问题标题（简单扼要）:</label>
+                    <input type="text" class="form-control" id="title" placeholder="别问！问就不会" name="title" th:value="${title}" >
                 </div>
                 <div class="form-group">
                     <label for="title">问题补充（必填，请参照右侧提示：）:</label>
-                    <textarea name="description" id="description" class="form-control" cols="30" rows="10"></textarea>
+                    <textarea name="description" id="description" class="form-control" cols="30" rows="10" th:value="${description}" ></textarea>
                 </div>
                 <div class="form-group">
                     <label for="title">添加标签</label>
-                    <input type="text" class="form-control" id="tag" name ="tag" placeholder="输入标签，以，分隔开" >
+                    <input type="text" class="form-control" id="tag" name ="tag" placeholder="输入标签，以，分隔开" th:value="${tag}" >
                 </div>
+    <!--警告框-->
+<!--                    <div class="alert alert-warning alert-dismissible" role="alert">-->
+<!--                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--                        <strong>Warning!</strong> 兄弟请先登录哦！-->
+<!--                    </div>-->
+                <div class="alert alert-warning" role="alert" th:text="${error}" th:if="${error!=null}">...</div>
+
 
                 <button type="submit" class="btn btn-success btn-publish">发布</button>
             </form>

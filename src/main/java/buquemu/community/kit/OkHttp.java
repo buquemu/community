@@ -9,8 +9,6 @@ import java.io.IOException;
 
 @Component
 public class OkHttp {
-
-
     public String getAccessToken(AccessToken accessToken){
             MediaType mediaType
                     = MediaType.get("application/json; charset=utf-8");

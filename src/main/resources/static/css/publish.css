@@ -1,0 +1,12 @@
+body{
+    background: url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1579022542084&di=601d2cd59c2697c8a0747a8a4f9adf10&imgtype=0&src=http%3A%2F%2Fup.deskcity.org%2Fpic_source%2F8b%2F0f%2F12%2F8b0f12718a18ccab9926d16185e4d448.jpg");
+    color:#fff;
+}
+.main{
+    background: #5a5f6938;
+    margin: 40px;
+}
+.btn-publish{
+    float: right;
+    margin-bottom: 15px;
+}
