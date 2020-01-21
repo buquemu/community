@@ -1,4 +1,4 @@
-package buquemu.community.Model;
+package buquemu.community.model;
 
 import lombok.Data;
 

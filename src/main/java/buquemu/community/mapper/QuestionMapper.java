@@ -1,10 +1,7 @@
 package buquemu.community.mapper;
 
-import buquemu.community.Model.Question;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import buquemu.community.model.Question;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -16,4 +13,12 @@ public interface QuestionMapper {
     List<Question> List(@Param("yeshu") Integer yeshu, @Param("size") Integer size);
     @Select("select count(1) from question")
     Integer count();
+    @Select("select * from question where creator = #{creator} limit #{yeshu},#{size}")
+    List<Question> find(@Param("creator") String name,@Param("yeshu") Integer yeshu, @Param("size") Integer size);
+    @Select("select count(1) from question where creator = #{creator}")
+    Integer countBycreator(@Param("creator") String name);
+    @Select("select * from question where id = #{id}")
+    Question getById(@Param("id") Integer id);
+    @Update("update question set title=#{title},description=#{description},gmt_modified=#{gmtModified},tag=#{tag} where id = #{id}")
+    void upDate(Question question);
 }

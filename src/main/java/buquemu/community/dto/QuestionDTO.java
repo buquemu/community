@@ -1,6 +1,6 @@
 package buquemu.community.dto;
 
-import buquemu.community.Model.User;
+import buquemu.community.model.User;
 import lombok.Data;
 
 @Data

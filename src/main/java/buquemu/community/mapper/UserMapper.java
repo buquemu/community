@@ -1,10 +1,7 @@
 package buquemu.community.mapper;
 
-import buquemu.community.Model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import buquemu.community.model.User;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
@@ -16,4 +13,9 @@ public interface UserMapper {
 
     @Select("select * from user where name = #{name}")
     User findById(@Param("name") String creator);
+
+    @Select("select * from user where account_id = #{accountId}")
+    User findByAccounId(@Param("accountId") String accountId);
+    @Update("update user set name = #{name} ,gmt_modified=#{gmtModified},token=#{token},avatar_url=#{avatarUrl} where account_id = #{accountId}")
+    void upDate(User user);
 }

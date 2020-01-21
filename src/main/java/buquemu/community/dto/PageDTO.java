@@ -19,7 +19,7 @@ public class PageDTO {
     private Integer totalPage;
     private List<Integer> pages = new ArrayList<>();
 
-    public void setPagination(Integer totalCount,Integer totalPage,Integer page) {
+    public void setPagination(Integer totalPage,Integer page) {
 //        高亮前台作比较
         this.page=page;
         this.totalPage=totalPage;
