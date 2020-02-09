@@ -29,9 +29,9 @@
                     <h4 class="media-heading">
                         <a th:href="@{'question/'+${question.id}}" th:text="${question.title}"></a>
                     </h4>
-                    <span th:text="${question.description}"></span>
+                    <span th:text="${question.tag}"></span>
                     <br>
-                    <span class="exc"><span th:text="${question.creator}"></span>发起了问题•<span th:text="${question.commentCount}"></span>个回复 • <span th:text="${question.viewCount}"></span>次浏览 • <span th:text="${#dates.format(question.gmtCreate, 'yyyy-MM-dd')}"></span> </span>
+                    <span class="exc"><span th:text="${question.user.getName()}"></span>发起了问题•<span th:text="${question.commentCount}"></span>个回复 • <span th:text="${question.viewCount}"></span>次浏览 • <span th:text="${#dates.format(question.gmtCreate, 'yyyy-MM-dd')}"></span> </span>
                 </div>
             </div>
             <nav aria-label="Page navigation" >

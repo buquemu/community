@@ -2,6 +2,7 @@ package buquemu.community.interceptor;
 
 import buquemu.community.model.User;
 import buquemu.community.mapper.UserMapper;
+import buquemu.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Component
 public class SessionInterception implements HandlerInterceptor {
@@ -24,9 +26,11 @@ public class SessionInterception implements HandlerInterceptor {
             for (Cookie cs:cookies) {
                 if("token".equals(cs.getName())){
                     String token = cs.getValue();
-                    User user = userMapper.findBycookie(token);
-                    if(user!=null) {
-                        request.getSession().setAttribute("githubuser", user);
+                    UserExample userExample = new UserExample();
+                    userExample.createCriteria().andTokenEqualTo(token);
+                    List<User> users = userMapper.selectByExample(userExample);
+                    if(users.size()!=0) {
+                        request.getSession().setAttribute("githubuser", users.get(0));
                     }
                     break;
                 }

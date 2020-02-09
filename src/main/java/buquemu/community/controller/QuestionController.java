@@ -19,6 +19,8 @@ public class QuestionController {
                            Model model){
 
        QuestionDTO questionDTO = questionService.getById(id);
+//       阅读数
+       questionService.addView(id);
        model.addAttribute("question",questionDTO);
         return "question";
     }

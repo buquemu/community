@@ -40,7 +40,7 @@ public class PersonController {
             model.addAttribute("sectionName","最新回复");
         }
 
-        PageDTO pagination = questionService.find(user.getName(), page, size);
+        PageDTO pagination = questionService.find(user.getId(), page, size);
         model.addAttribute("paginations",pagination);
         return "person";
     }

@@ -7,10 +7,7 @@ import buquemu.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,9 +16,9 @@ public class PublishController {
     @Autowired
     private QuestionService questionService;
 
-
-    @GetMapping("/publish/{id}")
-    public String edit(@PathVariable(name="id")Integer id
+//编辑
+    @PostMapping("/publish/edit")
+    public String edit(@RequestParam(name="id")Integer id
     ,Model model){
         QuestionDTO question = questionService.getById(id);
         model.addAttribute("title",question.getTitle());
@@ -72,7 +69,7 @@ public class PublishController {
         question.setTitle(title);
         question.setDescription(description);
         question.setTag(tag);
-        question.setCreator(user.getName());
+        question.setCreator(user.getId());
         question.setId(id);
         questionService.createOrUpdate(question);
        // return "index";
