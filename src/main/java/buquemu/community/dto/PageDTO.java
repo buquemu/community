@@ -5,8 +5,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 @Data
-public class PageDTO {
-    private List<QuestionDTO> question;
+public class PageDTO<T> {
+//    改为通用类型  既可以哦是QuestionDTO 也可以是NoticeDTO
+    private List<T> data;
 //    前一页
     private boolean showFirst;
 //    《《 最前面

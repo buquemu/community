@@ -10,3 +10,9 @@ body{
     float: right;
     margin-bottom: 15px;
 }
+.question-tag {
+    font-size: 101%;
+    font-weight: 400;
+    padding-right: 0px;
+    margin-right: 10px
+}

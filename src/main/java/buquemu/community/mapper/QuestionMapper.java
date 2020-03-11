@@ -139,4 +139,6 @@ public interface QuestionMapper {
     int addView(Question record);
 //    自定义comment数量
     int addComment(Question record);
+
+    List<Question> relevantTag(Question record);
 }

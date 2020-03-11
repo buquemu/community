@@ -1,5 +1,7 @@
 package buquemu.community.controller;
 
+import buquemu.community.Tag.TagCache;
+import buquemu.community.dto.TagDTO;
 import buquemu.community.model.Question;
 import buquemu.community.model.User;
 import buquemu.community.dto.QuestionDTO;
@@ -16,23 +18,25 @@ public class PublishController {
     @Autowired
     private QuestionService questionService;
 
-//编辑
+    //编辑 修改
     @PostMapping("/publish/edit")
-    public String edit(@RequestParam(name="id")Integer id
+    public String edit(@RequestParam("id")Integer id
     ,Model model){
         QuestionDTO question = questionService.getById(id);
         model.addAttribute("title",question.getTitle());
         model.addAttribute("description",question.getDescription());
         model.addAttribute("tag",question.getTag());
         model.addAttribute("id",question.getId());
+        model.addAttribute("tagDTO", TagCache.tag());
         return "publish";
     }
-
+//第一次创建的时候
     @GetMapping("/publish")
-    public String publish(){
+    public String publish(Model model){
+        model.addAttribute("tagDTO", TagCache.tag());
         return "publish";
     }
-
+//创建时返回错误信息
     @PostMapping("/publish")
     public String questionPublish(
             @RequestParam("title")String title,
@@ -41,6 +45,7 @@ public class PublishController {
             @RequestParam("id")Integer id,
             HttpServletRequest request, Model model
             ){
+        model.addAttribute("tagDTO", TagCache.tag());
         model.addAttribute("title",title);
         model.addAttribute("description",description);
         model.addAttribute("tag",tag);
@@ -57,12 +62,18 @@ public class PublishController {
             model.addAttribute("error","标签不能为空");
             return "publish";
         }
+//判断标签是否属于标签库
+        String s = TagCache.haveTag(tag);
+        if(s!=""){
+            model.addAttribute("error","输入非法标签"+"'"+s+"'");
+            return "publish";
+        }
 
-       User user = (User) request.getSession().getAttribute("githubuser");
+        User user = (User) request.getSession().getAttribute("githubuser");
 
         if(user==null){
             model.addAttribute("error","用户未登录");
-            return "index";
+            return "publish";
         }
 
         Question question = new Question();

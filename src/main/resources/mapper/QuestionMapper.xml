@@ -492,4 +492,9 @@
     set comment_count = comment_count + #{commentCount,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="relevantTag" parameterType="buquemu.community.model.Question" resultMap="BaseResultMap">
+    select * from question where id != #{id} and tag regexp #{tag}
+  </select>
 </mapper>

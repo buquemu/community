@@ -1,5 +1,6 @@
 package buquemu.community.service;
 
+import buquemu.community.dto.CommentDTO;
 import buquemu.community.exception.CustomErrorCode;
 import buquemu.community.exception.CustomException;
 import buquemu.community.model.Question;
@@ -13,6 +14,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,9 @@ public class QuestionService {
 //        数据库查询页数
         Integer yeshu = size*(page-1);
         //分页 。。方法            limit 0 5
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(),new RowBounds(yeshu,size));
+        QuestionExample example = new QuestionExample();
+        example.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example,new RowBounds(yeshu,size));
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         PageDTO pageDTO = new PageDTO();
         for (Question question : questions) {
@@ -48,7 +52,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        pageDTO.setQuestion(questionDTOList);
+        pageDTO.setData(questionDTOList);
 
         pageDTO.setPagination(totalPage,page);
         return pageDTO;
@@ -85,7 +89,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        pageDTO.setQuestion(questionDTOList);
+        pageDTO.setData(questionDTOList);
 
         pageDTO.setPagination(totalPage,page);
         return pageDTO;
@@ -97,6 +101,7 @@ public class QuestionService {
         if(question == null){
             throw new CustomException(CustomErrorCode.QUESTION_NOT_FOUND);
         }
+
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -109,7 +114,10 @@ public class QuestionService {
         if(question.getId()==null){
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.insertSelective(question);
+            question.setViewCount(0);
+            question.setCommentCount(0);
+            question.setLikeCount(0);
+            questionMapper.insert(question);
         }else {
             Question updateQuestion = new Question();
             updateQuestion.setGmtModified(System.currentTimeMillis());
@@ -126,11 +134,24 @@ public class QuestionService {
             }
         }
     }
-
+//阅读数
     public void addView(Integer id) {
         Question question = new Question();
         question.setId(id);
         question.setViewCount(1);
         questionMapper.addView(question);
+    }
+//相关问题推荐
+    public List<Question> RelevantQuestion(QuestionDTO questionDTO) {
+        String[] split = questionDTO.getTag().split(",");
+        String tag = StringUtils.join(split, "|");
+
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(tag);
+
+        List<Question> questions = questionMapper.relevantTag(question);
+
+        return questions;
     }
 }

@@ -1,21 +1,80 @@
-body{
-    color:#2b1515;
+body {
+    color: #2b1515;
     background-color: #73f6d72e;
 }
-.media-object{
+
+.media-object {
     width: 40px;
     height: 40px;
 }
-.exc{
+
+.exc {
     font-size: 12px;
     font-weight: normal;
     color: #999;
 }
-.main{
+
+.main {
     background: #b0b0b559;
     margin: 40px;
 }
-.community-meun{
+
+.community-meun {
     color: #999;
     font-size: 13px;
+}
+
+.comment {
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.btn-publish {
+    float: right;
+    margin-bottom: 10px;
+}
+
+.pinglun {
+    color: #999;
+    font-size: 15px;
+    margin-top: 7px;
+}
+.pinglun .dianzan {
+    margin-right: 15px;
+}
+.pinglun .dianzan:hover {
+    color: brown;
+}
+.pinglun .active {
+    color: #7676ff;
+}
+
+.comments {
+    /*下边框*/
+    border-bottom: 1px solid white;
+    margin-bottom: 15px;
+    margin-top: 5px;
+    padding-bottom: 14px;
+}
+
+.erjipinglun {
+    margin-top: 10px;
+    border: 1px solid #eee;
+    padding-top: 16px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.related {
+    padding-left: 0px;
+    list-style: none;
+    line-height: 30px;
+    font-size: 16px;
+}
+
+.question-tag {
+    font-size: 101%;
+    font-weight: 400;
+    padding-right: 0px;
+    margin-right: 10px
 }

@@ -7,3 +7,5 @@
 
 ##
 仿es社区 论坛项目
+
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
