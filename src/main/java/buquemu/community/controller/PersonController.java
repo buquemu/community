@@ -31,7 +31,7 @@ public class PersonController {
     ){
         User user = (User) request.getSession().getAttribute("githubuser");
         if(user==null){
-           // model.addAttribute("error","用户未登录");
+            model.addAttribute("error","用户未登录");
             return "redirect:/";
         }
 
@@ -47,7 +47,6 @@ public class PersonController {
             int unreadCount = noticeService.unreadCount(user.getId());
             model.addAttribute("section","replies");
             model.addAttribute("paginations",pagination);
-            model.addAttribute("unreadCount",unreadCount);
             model.addAttribute("sectionName","最新回复");
 
         }

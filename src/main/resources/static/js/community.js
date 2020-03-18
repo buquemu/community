@@ -137,54 +137,75 @@ function dianzan(e) {
 //    说明没点过攒
     //点击一下 增加
     //临时保存同一窗口的数据，在关闭窗口或标签页之后将会删除这些数据
-    var item = sessionStorage.getItem("key");
+    // var item = sessionStorage.getItem("key");
     var commentId = e.getAttribute("dianzan-id");
     //小手的哪个span标签
     var dangqian = $("#lailai-"+commentId);
-    if (item == null) {
-        $.ajax({
-            type: "POST",
-            url: "/comment/dianzan",
-            contentType: 'application/json',
-            data: JSON.stringify({
-                "commentId": commentId,
-                "type":1
-            }),
-            success: function (response) {
-                if (response.code == 200) {//点赞成功
-                    //往里放值
-                    dangqian.html(response.likeCount);
+
+    $.ajax({
+        async:false,
+        cache:false,
+        type: "POST",
+        url: "/praise/dianzan",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            "commentId": commentId,
+        }),
+        success: function (response) {
+            if (response.code == 200) {//点赞成功
+                    //通过后端查询返回给前端一个值  根据这个值判断该用户有没有给这个评论点过赞 如果点过就消除，如果没点过就增加
+                //说明没点过赞
+                if (response.status == 0) {
+                    $.ajax({
+                        async:false,
+                        cache:false,
+                        type: "POST",
+                        url: "/comment/dianzan",
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            "commentId": commentId,
+                            "type":1
+                        }),
+                        success: function (response) {
+                            if (response.code == 200) {//点赞成功
+                                //往里放值
+                                dangqian.html(response.likeCount);
+                            } else {
+                                alert(response.message)
+                            }
+                        },
+                        dataType: "json"
+                    });
                 } else {
-                    alert(response.message)
+                    $.ajax({
+                        async:false,
+                        cache:false,
+                        type: "POST",
+                        url: "/comment/dianzan",
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            "commentId": commentId,
+                            "type":2
+                        }),
+                        success: function (response) {
+                            if (response.code == 200) {//点赞成功
+                                // 往里放值
+                                dangqian.html(response.likeCount);
+                            } else {
+                                alert(response.message)
+                            }
+                        },
+                        dataType: "json"
+                    });
+                    // //点一下删除
+                    // sessionStorage.clear();
                 }
-            },
-            dataType: "json"
-        });
-        sessionStorage.setItem("key","you");
-    } else {
-        $.ajax({
-            type: "POST",
-            url: "/comment/dianzan",
-            contentType: 'application/json',
-            data: JSON.stringify({
-                "commentId": commentId,
-                "type":2
-            }),
-            success: function (response) {
-                if (response.code == 200) {//点赞成功
-                    // 往里放值
-                    dangqian.html(response.likeCount);
-                    // dangqian.prepend(dianzan)
-                    //  window.location.reload();
-                } else {
-                    alert(response.message)
-                }
-            },
-            dataType: "json"
-        });
-        //点一下删除
-        sessionStorage.clear();
-    }
+            } else {
+                alert(response.message)
+            }
+        },
+        dataType: "json"
+    });
 }
 
 

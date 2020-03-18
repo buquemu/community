@@ -64,8 +64,8 @@ public class PublishController {
         }
 //判断标签是否属于标签库
         String s = TagCache.haveTag(tag);
-        if(s!=""){
-            model.addAttribute("error","输入非法标签"+"'"+s+"'");
+        if(s.length()>=1){
+            model.addAttribute("error","输入非法标签"+"'"+s+"'"+"请输入标签库存在的标签");
             return "publish";
         }
 

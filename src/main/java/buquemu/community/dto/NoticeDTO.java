@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class NoticeDTO {
+//    数据库主键
+    private int id;
     private int outerId;
     private Long gmtCreate;
 //    是否读了

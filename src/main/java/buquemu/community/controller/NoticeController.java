@@ -28,9 +28,10 @@ public class NoticeController {
     @Autowired
     NoticeService noticeService;
 
-    @GetMapping("/notice/{id}/{type}")
+    @GetMapping("/notice/{id}/{type}/{zhujian}")
     public String title(@PathVariable("id") int id,
                         @PathVariable("type") int type,
+                        @PathVariable("zhujian") int zhujian,
                         HttpServletRequest request) {
 
         User user = (User) request.getSession().getAttribute("githubuser");
@@ -52,17 +53,17 @@ public class NoticeController {
         if(!TongZhiEnum.inClude(type)){
             throw new CustomException(CustomErrorCode.NOTICE_TYPE_WRONG);
         }
-
-
-        // 他有并且不是当前用户的 抛异常 outerId 和type都正确
-        for (Notice notice : notices) {
-               if( notices.size()!=0 && !notice.getNotofier().equals(user.getId())){
-                   throw new CustomException(CustomErrorCode.NOTICE_IS_NOTYOUR);
-               }
-        }
+//
+//
+//        // 他有并且不是当前用户的 抛异常 outerId 和type都正确
+//        for (Notice notice : notices) {
+//               if( notices.size()!=0 && !notice.getNotofier().equals(user.getId())){
+//                   throw new CustomException(CustomErrorCode.NOTICE_IS_NOTYOUR);
+//               }
+//        }
 
         //        点击跳转将未读变成已读
-        noticeService.read(id,type);
+        noticeService.read(id,type,zhujian);
 
 
 
@@ -74,6 +75,7 @@ public class NoticeController {
 
 //        找到评论
         Comment comment = commentMapper.selectByPrimaryKey(id);
+
 //        找到问题
         Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
         return "redirect:/question/"+ question.getId() ;

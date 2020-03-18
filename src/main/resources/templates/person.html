@@ -53,16 +53,12 @@
                 <div class="media" th:each="notice:${paginations.data}">
                     <div class="media-body">
                         <p class="media-heading">
-                            <span  th:text="${notice.receiver.name+' '+ notice.describe+' '}"></span>
-                            <a th:href="@{'/notice/'+${notice.outerId}+'/'+${notice.type}}" th:text="${notice.title}"></a>
-<!--                            <span>-->
-<!--                                <form id="_form" method="get" style="margin-bottom: 20px" action="notice">-->
-<!--                                    <input type="hidden" name="id" th:value="${notice.outerId}"/>-->
-<!--                                    <input type="hidden" name="type" th:value="${notice.type}"/>-->
-<!--                                    <a onclick="document.getElementById('_form').submit();"  th:text="${notice.title}">-->
-<!--                                    </a>-->
-<!--                                </form>-->
-<!--                            </span>-->
+                            <span  th:text="${notice.receiver.name+'  '+ notice.describe+'  '}"></span>
+                            <a th:href="@{'/notice/'+${notice.outerId}+'/'+${notice.type}+'/'+${notice.id}}" th:text="${notice.title}">
+                            </a>
+                            <span class="label label-danger" th:if="${notice.status == 0}">未读</span>
+                            <span th:text="${#dates.format(notice.gmtCreate, 'MM'+'月'+'dd')}"
+                                  style="float: right"></span>
                         </p>
                     </div>
 
@@ -108,11 +104,12 @@
                    th:class="${section=='questions'}?'active list-group-item':'list-group-item'">我的问题</a>
                 <a href="/profile/replies"
                    th:class="${section=='replies'}?'active list-group-item':'list-group-item'">最新通知
-                    <span class="badge" th:text="${unreadCount}"></span>
+                    <span class="badge" th:text="${session.unReadCount}"></span>
                 </a>
             </div>
         </div>
     </div>
 </div>
+<div th:insert="~{footer :: foot}"></div>
 </body>
 </html>

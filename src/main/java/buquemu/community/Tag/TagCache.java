@@ -36,6 +36,8 @@ public class TagCache {
 //        返回一个出错的集合
         String invalid = Arrays.stream(split).filter(t -> !collect.contains(t)).collect(Collectors.joining(","));
 //返回非法标签
+        System.out.println(invalid);
+
         return invalid;
     }
 }

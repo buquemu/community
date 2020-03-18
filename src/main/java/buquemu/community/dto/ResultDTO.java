@@ -12,6 +12,8 @@ public class ResultDTO {
     private Integer code;
     private String message;
     private Integer likeCount;
+//   判断用户有没有点过赞
+    private Integer status;
     private List Data;
 
     public static ResultDTO errorOf(Integer code,String message){
@@ -50,4 +52,13 @@ public class ResultDTO {
         resultDTO.setLikeCount(likeCount);
         return resultDTO;
     }
+
+    public static ResultDTO praise(Integer status){
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(200);
+        resultDTO.setMessage("登录成功");
+        resultDTO.setStatus(status);
+        return resultDTO;
+    }
+
 }

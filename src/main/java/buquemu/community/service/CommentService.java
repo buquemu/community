@@ -7,10 +7,7 @@ import buquemu.community.enums.TongZhiEnum;
 import buquemu.community.enums.TongZhiStatusEnum;
 import buquemu.community.exception.CustomErrorCode;
 import buquemu.community.exception.CustomException;
-import buquemu.community.mapper.CommentMapper;
-import buquemu.community.mapper.NoticeMapper;
-import buquemu.community.mapper.QuestionMapper;
-import buquemu.community.mapper.UserMapper;
+import buquemu.community.mapper.*;
 import buquemu.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,8 @@ public class CommentService {
     private UserMapper userMapper;
     @Autowired
     private NoticeMapper noticeMapper;
+    @Autowired
+    private PraiseMapper praiseMapper;
 
     @Transactional
     public void insert(Comment comment) {
@@ -50,20 +49,25 @@ public class CommentService {
             commentMapper.insert(comment);
             huifu.setCommentCount(1);
             commentMapper.addCommentCount(huifu);
-//添加通知
-            Notice notice = new Notice();
-            notice.setGmtCreate(System.currentTimeMillis());
-            notice.setType(TongZhiEnum.REPLAY_COMMENT.getType());
-            notice.setOuterid(comment.getParentId());
+
+
+                //添加通知
+                Notice notice = new Notice();
+                notice.setGmtCreate(System.currentTimeMillis());
+                notice.setType(TongZhiEnum.REPLAY_COMMENT.getType());
+                notice.setOuterid(comment.getParentId());
 //  接收者       评论的创建人
-            notice.setNotofier(comment.getCommentator());
-            notice.setStatus(TongZhiStatusEnum.DEFAULT.getStatus());
+                notice.setNotofier(comment.getCommentator());
+                notice.setStatus(TongZhiStatusEnum.DEFAULT.getStatus());
 //  发送者        回复的创建人
-            notice.setReceiver(huifu.getCommentator());
-            // 先根据2几评论找到1级评论 再根据1级评论找到问题
-            Question question = questionMapper.selectByPrimaryKey(huifu.getParentId());
-            notice.setTitle(question.getTitle());
-            noticeMapper.insert(notice);
+                notice.setReceiver(huifu.getCommentator());
+                // 先根据2几评论找到1级评论 再根据1级评论找到问题
+                Question question = questionMapper.selectByPrimaryKey(huifu.getParentId());
+                notice.setTitle(question.getTitle());
+                if (huifu.getCommentator()==comment.getCommentator()){
+                    return;
+                }
+                noticeMapper.insert(notice);
         } else {
 //            回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -85,6 +89,9 @@ public class CommentService {
             notice.setStatus(TongZhiStatusEnum.DEFAULT.getStatus());
 // 发送者  当前问题的评论人
             notice.setReceiver(comment.getCommentator());
+            if(question.getCreator()==comment.getCommentator()){
+                return;
+            }
             noticeMapper.insert(notice);
 
         }
@@ -103,15 +110,6 @@ public class CommentService {
         if (comments.size() == 0) {
             return new ArrayList<>();
         }
-//            没有重复userId
-//        Set<Integer> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
-//        ArrayList<Integer> userIds = new ArrayList<>();
-//        userIds.addAll(commentators);
-////根据userid拿到user信息
-//        UserExample userExample = new UserExample();
-//        userExample.createCriteria().andIdIn(userIds);
-//        List<User> users = userMapper.selectByExample(userExample);
-//将user和comment放入commentDTO
         List<CommentDTO> commentDTOList = new ArrayList<>();
         for (Comment comment: comments) {
             CommentDTO commentDTO = new CommentDTO();
@@ -132,6 +130,23 @@ public class CommentService {
             //        增加点赞数
             comment.setLikeCount(1);
             commentMapper.addLikeCount(comment);
+
+//            添加点赞到数据库
+            PraiseExample example = new PraiseExample();
+            example.createCriteria().andCommentidEqualTo(comment.getId()).andUserEqualTo(user.getId());
+            List<Praise> praises = praiseMapper.selectByExample(example);
+//            没有增加
+            if (praises.size()==0){
+            Praise praise = new Praise();
+            praise.setType(1);
+            praise.setUser(user.getId());
+            praise.setCommentid(comment.getId());
+            praiseMapper.insert(praise);
+            }else {
+                //有就修改  1待变点过赞了 0代表没点过赞
+                praise(comment,user,1);
+            }
+
 //  调用通知方法
             addTongzhi(comment,user,likeCountId);
             Comment Returncomment = commentMapper.selectByPrimaryKey(likeCountId.getCommentId());
@@ -139,20 +154,17 @@ public class CommentService {
         }
         else{
 //     前端没有弄好  点赞变成了负数 点的时候就给他+1
-            if(comment.getLikeCount()>0){
                 //     减少点赞数
                 comment.setLikeCount(1);
                 commentMapper.reduceLikeCount(comment);
+//                评论id相同 UserId也要相同
+
+//              修改点赞表的status；
+                praise(comment,user,0);
+
                 Comment Returncomment = commentMapper.selectByPrimaryKey(likeCountId.getCommentId());
                 return Returncomment.getLikeCount();
-            }else {
-                commentMapper.addLikeCount(comment);
-                //      增加点赞数
-                comment.setLikeCount(1);
-                addTongzhi(comment,user,likeCountId);
-                Comment Returncomment = commentMapper.selectByPrimaryKey(likeCountId.getCommentId());
-                return Returncomment.getLikeCount();
-            }
+
         }
     }
 
@@ -176,7 +188,24 @@ public class CommentService {
             // 先根据2几评论找到1级评论 再根据1级评论找到问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
             notice.setTitle(question.getTitle());
+//            自己点赞自己不通知
+            if (user.getId()==comment.getCommentator()){
+                return;
+            }
             noticeMapper.insert(notice);
+
         }
     }
+
+//    封装一下点赞功能
+        public void praise( Comment comment,User user,int i){
+        //                修该点赞表 不仅Userid相同 而且必须CommentId也要相同
+            Praise record = new Praise();
+            record.setType(i);
+            PraiseExample example = new PraiseExample();
+            example.createCriteria().andCommentidEqualTo(comment.getId()).andUserEqualTo(user.getId());
+            praiseMapper.updateByExampleSelective(record, example);
+        }
+
+
 }
