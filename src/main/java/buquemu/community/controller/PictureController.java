@@ -50,5 +50,4 @@ public class PictureController {
         }
         return responseResult;
     }
-
 }
