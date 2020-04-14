@@ -63,7 +63,7 @@ public class NoticeController {
 //        }
 
         //        点击跳转将未读变成已读
-        noticeService.read(id,type,zhujian);
+        noticeService.read(zhujian);
 
 
 

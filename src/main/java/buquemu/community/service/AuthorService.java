@@ -1,5 +1,6 @@
 package buquemu.community.service;
 
+import buquemu.community.dto.QQUserDTO;
 import buquemu.community.model.User;
 import buquemu.community.dto.GithubUser;
 import buquemu.community.mapper.UserMapper;
@@ -49,10 +50,50 @@ public class AuthorService {
                 userMapper.updateByExampleSelective(updateUser, example);
             }
             Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(60 * 60 * 24 * 6);
+            cookie.setMaxAge(60 * 60 * 24 * 7);
             rsp.addCookie(cookie);
             return true;
         }
         return false;
     }
+
+    public Boolean QQauthor(QQUserDTO qqUserDTO, HttpServletResponse rsp) {
+        if (qqUserDTO != null && qqUserDTO.getOpenId() != null) {
+            User user = new User();
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            user.setAccountId(String.valueOf(qqUserDTO.getOpenId()));
+            user.setName(qqUserDTO.getNickname());
+            user.setAvatarUrl(qqUserDTO.getFigureurl_1());
+            UserExample userExample = new UserExample();
+            userExample.createCriteria().andAccountIdEqualTo(user.getAccountId());
+            List<User> users = userMapper.selectByExample(userExample);
+            if (users.size() == 0) {
+//   没找到        插入
+                //当前的毫秒数
+                user.setGmtCreate(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreate());
+                userMapper.insert(user);
+            } else {
+//           更新
+                User dbUser = users.get(0);
+                User updateUser = new User();
+                updateUser.setAvatarUrl(user.getAvatarUrl());
+                updateUser.setName(user.getName());
+                updateUser.setToken(user.getToken());
+                updateUser.setGmtModified(System.currentTimeMillis());
+
+                UserExample example = new UserExample();
+                example.createCriteria().andIdEqualTo(dbUser.getId());
+                userMapper.updateByExampleSelective(updateUser, example);
+            }
+            Cookie cookie = new Cookie("token", token);
+            cookie.setMaxAge(60 * 60 * 24 * 7);
+            rsp.addCookie(cookie);
+            return true;
+        }
+        return false;
+    }
+
+
 }

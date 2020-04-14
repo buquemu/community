@@ -22,7 +22,7 @@ public class SessionInterception implements HandlerInterceptor {
     private NoticeService noticeService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         Cookie[] cookies = request.getCookies();
         if(cookies!=null&&cookies.length!=0)
             //  System.out.println(cookies.toString());

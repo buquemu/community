@@ -71,7 +71,7 @@ public class NoticeService {
     }
 
 // 将未读变成已读
-    public void read(int id,int type,int zhujian) {
+    public void read(int zhujian) {
         Notice notice = noticeMapper.selectByPrimaryKey(zhujian);
         notice.setStatus(TongZhiStatusEnum.READ.getStatus());
         noticeMapper.updateByPrimaryKeySelective(notice);

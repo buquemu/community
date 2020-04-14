@@ -23,7 +23,7 @@ function comments(questionId, type, comment) {
                     //js对象window自带的能确定的框
                     var b = confirm(response.message);
                     if (b) {
-                        window.open("https://github.com/login/oauth/authorize?client_id=e77dcf34f75f3d1de383&redirect_uri=http://localhost:8887/callback&scope=user&state=1")
+                        window.open("/?page=1")
                         //只能以字符串形式保存  会跳转到index开启一个新的页面 要保存一个这个来在index判断 是否删除
                         localStorage.setItem("close", true);
                     }

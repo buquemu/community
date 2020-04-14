@@ -17,15 +17,20 @@
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-                <form class="navbar-form navbar-left">
+                <form class="navbar-form navbar-left" action="/search" method="get">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="搜索问题">
+                        <input type="text" class="form-control" placeholder="搜索问题" id="query" name="query"  autocomplete="off">
                     </div>
-                    <button type="submit" class="btn btn-default">搜索</button>
+                    <button type="submit" class="btn btn-default" >搜索</button>
                 </form>
+
                 <ul class="nav navbar-nav navbar-right">
                     <!--有session值-->
                     <!--/*@thymesVar id="githubuser" type=""*/-->
+                    <li>
+                        <a href="http://buquemu.github.io/" target="_blank" style="text-decoration:none" >个人博客</a>
+                    </li>
+
                     <li th:if="${session.githubuser!=null}">
                         <a href="/publish">发布</a>
                     </li>
@@ -45,7 +50,13 @@
                     <!--根据session有没有值 展示不同的页面-->
                     <!---->
                     <li th:unless="${session.githubuser!=null}">
-                        <a href="https://github.com/login/oauth/authorize?client_id=e77dcf34f75f3d1de383&redirect_uri=http://buquemu/callback&scope=user&state=1">登录</a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
+                            <span>登录</span>
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://github.com/login/oauth/authorize?client_id=e77dcf34f75f3d1de383&redirect_uri=http://localhost/callback&scope=user&state=1">GitHub登录</a></li>
+                            <li><a href="https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=101866996&redirect_uri=http://buquemu.cn/callback/QQ&state=2">QQ登录</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>

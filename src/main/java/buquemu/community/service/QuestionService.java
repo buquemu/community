@@ -26,38 +26,74 @@ public class QuestionService {
     QuestionMapper questionMapper;
     @Autowired
     UserMapper userMapper;
-    public PageDTO list(Integer page, Integer size) {
+    public PageDTO list(Integer page, Integer size,String tag) {
 
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
-        Integer totalPage = (totalCount % size == 0) ? totalCount / size : totalCount / size + 1;
-        //数据校验放置page越界
-        if(page<1){
-            page=1;
-        }
-        if(page>totalPage){
-            page=totalPage;
-        }
+//        根据tag是否为空 判断是否市热门标签
+        if(tag.length()>1){
+            QuestionExample example = new QuestionExample();
+            example.createCriteria().andTagLike("%"+tag+"%");
+            Integer totalCount = (int)questionMapper.countByExample(example);
+            Integer totalPage = (totalCount % size == 0) ? totalCount / size : totalCount / size + 1;
+            //数据校验放置page越界
+            if(page<1){
+                page=1;
+            }
+            if(page>totalPage){
+                page=totalPage;
+            }
 //        数据库查询页数
-        Integer yeshu = size*(page-1);
-        //分页 。。方法            limit 0 5
-        QuestionExample example = new QuestionExample();
-        example.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example,new RowBounds(yeshu,size));
-        List<QuestionDTO> questionDTOList = new ArrayList<>();
-        PageDTO pageDTO = new PageDTO();
-        for (Question question : questions) {
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
-            questionDTOList.add(questionDTO);
+            Integer yeshu = size*(page-1);
+            //分页 。。方法            limit 0 5
+            QuestionExample example1 = new QuestionExample();
+            example1.createCriteria().andTagLike("%"+tag+"%");
+            example1.setOrderByClause("gmt_create desc");
+            List<Question> questions = questionMapper.selectByExampleWithRowbounds(example1,new RowBounds(yeshu,size));
+
+            List<QuestionDTO> questionDTOList = new ArrayList<>();
+            PageDTO pageDTO = new PageDTO();
+            for (Question question : questions) {
+                User user = userMapper.selectByPrimaryKey(question.getCreator());
+                QuestionDTO questionDTO = new QuestionDTO();
+                BeanUtils.copyProperties(question,questionDTO);
+                questionDTO.setUser(user);
+                questionDTOList.add(questionDTO);
+            }
+            pageDTO.setData(questionDTOList);
+
+            pageDTO.setPagination(totalPage,page);
+            return pageDTO;
+        }else {
+            Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
+            Integer totalPage = (totalCount % size == 0) ? totalCount / size : totalCount / size + 1;
+            //数据校验放置page越界
+            if (page < 1) {
+                page = 1;
+            }
+            if (page > totalPage) {
+                page = totalPage;
+            }
+//        数据库查询页数
+            Integer yeshu = size * (page - 1);
+            //分页 。。方法            limit 0 5
+            QuestionExample example = new QuestionExample();
+            example.setOrderByClause("gmt_create desc");
+            List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(yeshu, size));
+            List<QuestionDTO> questionDTOList = new ArrayList<>();
+            PageDTO pageDTO = new PageDTO();
+            for (Question question : questions) {
+                User user = userMapper.selectByPrimaryKey(question.getCreator());
+                QuestionDTO questionDTO = new QuestionDTO();
+                BeanUtils.copyProperties(question, questionDTO);
+                questionDTO.setUser(user);
+                questionDTOList.add(questionDTO);
+            }
+            pageDTO.setData(questionDTOList);
+
+            pageDTO.setPagination(totalPage, page);
+            return pageDTO;
         }
-        pageDTO.setData(questionDTOList);
-
-        pageDTO.setPagination(totalPage,page);
-        return pageDTO;
-
     }
+
 
     public PageDTO find(Integer name, Integer page, Integer size) {
 //    一个用户问问题总数

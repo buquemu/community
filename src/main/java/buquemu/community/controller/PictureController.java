@@ -21,7 +21,7 @@ public class PictureController {
     AliyunService aliyunService;
     @PostMapping("/picture/upload")
     @ResponseBody
-    public PictureDTO upload(@RequestParam("editormd-image-file") MultipartFile file, Model model){
+    public PictureDTO upload(@RequestParam("editormd-image-file") MultipartFile file){
         PictureDTO responseResult = new PictureDTO();
         String filename = file.getOriginalFilename();
 //        System.out.println(filename);
